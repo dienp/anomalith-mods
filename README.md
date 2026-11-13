@@ -10,12 +10,6 @@ BepInEx mods for the Windows x64 Unity Mono build of [ANOMALITH on Steam](https:
 4. Download the [release ZIP](https://github.com/dienp/anomalith-mods/releases/download/v1.0.2/anomalith-mods-v1.0.2.zip) and extract it into the folder containing `Anomalith.exe`. Both mod DLLs go into `BepInEx/scripts`.
 5. Launch the game. The ZIP enables automatic loading, so both mods start without **F6**.
 
-If you already customized ScriptEngine, keep your existing
-`BepInEx/config/com.bepis.bepinex.scriptengine.cfg` when extracting and set
-`LoadOnStart = true` under `[General]` while the game is closed.
-
-If you installed the old FOV mod, remove `BepInEx/plugins/AnomalithFov.dll` while the game is closed and use ANOMALITH's Camera settings to adjust FOV.
-
 ## Mods
 
 | Mod | What it does |
