@@ -1,0 +1,17 @@
+schema: spec-driven
+
+context: |
+  This unit is a Windows x64 BepInEx plugin for the local Unity Mono build of
+  ANOMALITH. Build against the installed game and loader. Read native game
+  state without changing game settings, inventory, or saves. Keep the
+  build compatible with ScriptEngine hot reload.
+
+rules:
+  proposal:
+    - State the scope of the first playable version and its exclusions.
+  specs:
+    - Specify selection, material counts, visibility, and pin persistence.
+  design:
+    - Use the game’s Workshop selection, recipe data, and inventory counts.
+  tasks:
+    - Include a Release build, ScriptEngine integration, and strict local validation.

@@ -1,0 +1,16 @@
+schema: spec-driven
+
+context: |
+  This unit is a Windows x64 BepInEx plugin for the Unity Mono build of ANOMALITH.
+  Build against the local game and loader assemblies. Keep them out of version
+  control. Changes must preserve the game's saved settings and original files.
+
+rules:
+  proposal:
+    - State what is out of scope.
+  specs:
+    - Define observable camera and configuration behavior.
+  design:
+    - Prefer the native FOV path and identify how to verify actual lens changes.
+  tasks:
+    - Include a release build, a local BepInEx gameplay check, documentation, and local spec validation.

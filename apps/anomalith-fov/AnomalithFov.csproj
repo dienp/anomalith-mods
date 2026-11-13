@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>8.0</LangVersion>
+    <AssemblyName>AnomalithFov</AssemblyName>
+    <RootNamespace>AnomalithFov</RootNamespace>
+    <Version>1.0.0</Version>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <GameManaged>$(AnomalithDir)/Anomalith_Data/Managed</GameManaged>
+    <BepInExCore>$(AnomalithDir)/BepInEx/core</BepInExCore>
+  </PropertyGroup>
+
+  <Target Name="CheckGameReferences" BeforeTargets="ResolveAssemblyReferences">
+    <Error Condition="'$(AnomalithDir)' == '' Or !Exists('$(GameManaged)/Assembly-CSharp.dll') Or !Exists('$(BepInExCore)/BepInEx.dll')"
+           Text="Set AnomalithDir to a local ANOMALITH installation with BepInEx 5 installed." />
+  </Target>
+
+  <ItemGroup>
+    <Reference Include="BepInEx" HintPath="$(BepInExCore)/BepInEx.dll" Private="false" />
+    <Reference Include="0Harmony" HintPath="$(BepInExCore)/0Harmony.dll" Private="false" />
+    <Reference Include="Assembly-CSharp" HintPath="$(GameManaged)/Assembly-CSharp.dll" Private="false" />
+    <Reference Include="Cinemachine" HintPath="$(GameManaged)/Cinemachine.dll" Private="false" />
+    <Reference Include="UnityEngine" HintPath="$(GameManaged)/UnityEngine.dll" Private="false" />
+    <Reference Include="UnityEngine.CoreModule" HintPath="$(GameManaged)/UnityEngine.CoreModule.dll" Private="false" />
+  </ItemGroup>
+</Project>

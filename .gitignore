@@ -1,0 +1,10 @@
+node_modules/
+.env
+.env.*
+bin/
+obj/
+__pycache__/
+*.pyc
+*.dll
+*.pdb
+*.log

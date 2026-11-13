@@ -1,0 +1,13 @@
+schema: spec-driven
+
+context: |
+  This unit is a Windows x64 BepInEx plugin for the local Unity Mono build of
+  ANOMALITH. Reuse the installed game's native map assets and support
+  ScriptEngine hot reload. Read game state without changing saves, inputs,
+  inventory, or the pause map.
+
+rules:
+  specs:
+    - Specify gameplay visibility, position and floor behavior, and unavailable map handling.
+  tasks:
+    - Include a Release build, live integration checks, and strict local validation.

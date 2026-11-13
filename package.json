@@ -1,0 +1,11 @@
+{
+  "name": "anomalith-mods",
+  "private": true,
+  "description": "Mods for the Windows Unity Mono build of ANOMALITH.",
+  "scripts": {
+    "spec": "node scripts/spec.mjs"
+  },
+  "devDependencies": {
+    "@fission-ai/openspec": "1.15.0"
+  }
+}
