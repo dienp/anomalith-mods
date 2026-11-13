@@ -56,8 +56,8 @@ Controls and the pin are stored in
 
 ## Build and install
 
-Requires the .NET 8 SDK, ANOMALITH for Windows x64, BepInEx 5.4.23.6, and
-ScriptEngine 11.2. The project targets `netstandard2.1` and builds against
+Requires the .NET 8 SDK, ANOMALITH for Windows x64, and BepInEx 5.4.23.6.
+The project targets `netstandard2.1` and builds against
 the local game and BepInEx assemblies. It has no NuGet dependencies,
 environment variables, external services, or local package dependencies.
 
@@ -67,12 +67,11 @@ From the repository root in PowerShell:
 $game = 'E:/Games/ANOMALITH'
 dotnet build apps/anomalith-upgrade-tracker/AnomalithUpgradeTracker.csproj -c Release -p:AnomalithDir=$game
 Copy-Item -LiteralPath 'apps/anomalith-upgrade-tracker/bin/Release/netstandard2.1/AnomalithUpgradeTracker.dll' `
-    -Destination (Join-Path $game 'BepInEx/scripts')
+    -Destination (Join-Path $game 'BepInEx/plugins')
 ```
 
-The build embeds its debug symbols for ScriptEngine. Press **F6** in-game to
-load or reload it, or let ScriptEngine's file watcher handle the change.
-Remove the DLL from `BepInEx/scripts` and reload to unload the tracker.
+BepInEx loads the mod when the game starts. Close the game before replacing
+or removing the DLL.
 
 ## Verify
 

@@ -149,3 +149,9 @@ Unknown Trooper (Sniper) name in the details. The installed build's
 lookup also returned the Sentinel on Block E Roof, distinct Self
 variants in HE Corp Building, and multiple areas for Protective
 Equipment Fragments. Only the Shotgun pin was checked in the live menu.
+## BepInEx startup install
+
+With the Release DLL in `BepInEx/plugins` and ScriptEngine outside the load
+path, BepInEx 5.4.23.6 loaded Upgrade Tracker 1.8.0 at startup. The tracker
+restored the Revolver Attack Power pin and displayed the Base checklist
+with Theater Lamp at `0/1`.

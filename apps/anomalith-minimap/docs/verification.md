@@ -55,3 +55,8 @@ Other Settings displayed Minimap and Pinned Item below Reset to Default.
 Both used the game's ON/OFF labels and directional arrows. Switching both
 off saved their settings. A second hot reload while Other Settings was
 open restored both OFF rows without duplicates.
+## BepInEx startup install
+
+With the Release DLL in `BepInEx/plugins` and ScriptEngine outside the load
+path, BepInEx 5.4.23.6 loaded Minimap 1.3.0 at startup. After loading the save,
+the Base minimap rendered with the player marker and points of interest.

@@ -22,17 +22,16 @@ See [runtime verification](docs/verification.md).
 ## Build and install
 
 Requires the .NET 8 SDK, a local Windows x64 ANOMALITH installation, BepInEx
-5.4.23.6 and ScriptEngine 11.2. The project targets `netstandard2.1` and
+5.4.23.6. The project targets `netstandard2.1` and
 references assemblies from the game and loader. It has no NuGet dependencies,
 environment variables or external services.
 
 ```powershell
 $game = 'E:/Games/ANOMALITH'
 dotnet build apps/anomalith-minimap/AnomalithMinimap.csproj -c Release -p:AnomalithDir=$game
-Copy-Item -LiteralPath 'apps/anomalith-minimap/bin/Release/netstandard2.1/AnomalithMinimap.dll' -Destination (Join-Path $game 'BepInEx/scripts')
+Copy-Item -LiteralPath 'apps/anomalith-minimap/bin/Release/netstandard2.1/AnomalithMinimap.dll' -Destination (Join-Path $game 'BepInEx/plugins')
 npm run spec -- apps/anomalith-minimap validate --all --strict
 ```
 
-The build embeds debug symbols for ScriptEngine. Let its file watcher load
-the mod or press **F6** to reload scripts. To remove it, move the DLL out of
-`BepInEx/scripts` and reload.
+BepInEx loads the mod when the game starts. Close the game before replacing
+or removing the DLL.
