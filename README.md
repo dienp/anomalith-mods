@@ -18,6 +18,24 @@ If upgrading from v1.0.1 or v1.0.2, remove the old Minimap and Upgrade Tracker D
 | [Upgrade Tracker](apps/anomalith-upgrade-tracker/README.md) | Pins Workshop recipes, highlights material sources on Deploy, and shows which weapons fit the attachment highlighted in **Workshop → Development → Attachment**. |
 | [Minimap](apps/anomalith-minimap/README.md) | Shows the native floor plan, player position, and points of interest during gameplay. |
 
+## Screenshots
+
+### Minimap and upgrade checklist
+
+![Base gameplay with the minimap in the lower left and the pinned Revolver upgrade checklist in the upper right](docs/screenshots/gameplay-hud.png)
+
+### Pin a Workshop recipe
+
+![Workshop Development screen with the Pin recipe button beside Required Materials](docs/screenshots/pin-recipe.png)
+
+### Attachment compatibility
+
+![Workshop Attachment screen listing compatible weapons for the Lightweight Angled fore grip, with undeveloped weapons grouped separately](docs/screenshots/attachment-compatibility.png)
+
+### Visibility settings
+
+![Other Settings menu with Minimap and Pinned Item both set to ON](docs/screenshots/visibility-settings.png)
+
 ## Build from source
 
 Use a local copy of ANOMALITH, the .NET 8 SDK, and BepInEx 5.
