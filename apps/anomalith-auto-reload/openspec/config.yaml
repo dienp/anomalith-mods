@@ -1,0 +1,13 @@
+schema: spec-driven
+
+context: |
+  Target the Windows x64 Unity Mono build of ANOMALITH and BepInEx 5.
+  Use the game's native action and inventory logic.
+
+rules:
+  proposal:
+    - State the gameplay behavior and scope explicitly.
+  specs:
+    - Describe when automatic actions may run and which states suppress them.
+  tasks:
+    - Include build, runtime or native behavior checks, and local OpenSpec validation.
