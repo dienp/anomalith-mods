@@ -5,6 +5,11 @@ plugin attached its native reload hook at startup. On a development install
 with ScriptEngine 11.2, a DLL file change triggered a reload in the same game
 process, and a runtime check found exactly one Auto Reload hook afterward.
 
+In the Base shooting range, the magazine went from one round to zero, the
+game entered its native reload state, and the magazine refilled to six.
+The Other Settings row accepted OFF and ON. The ON choice was still in
+effect after ScriptEngine reloaded the plugin.
+
 ## Gameplay check
 
 In the Base shooting range, fire a magazine-fed firearm until it reaches zero.

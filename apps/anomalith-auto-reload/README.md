@@ -7,8 +7,9 @@ the game allows it. Reloads use the game's animation and ammo rules.
 
 For the Windows x64 Unity Mono build with BepInEx 5.4.23.6, place
 `AnomalithAutoReload.dll` in `BepInEx/plugins` and launch ANOMALITH. The mod is
-enabled by default. To disable it, close the game and set `Enabled = false`
-under `[Gameplay]` in `BepInEx/config/labs.anomalith.autoreload.cfg`.
+enabled by default. Go to **Options → Other Settings → Auto Reload** to turn
+it ON or OFF. The preference is saved in
+`BepInEx/config/labs.anomalith.autoreload.cfg`.
 
 ## Build and verify
 

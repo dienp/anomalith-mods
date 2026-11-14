@@ -6,12 +6,13 @@ using HarmonyLib;
 
 namespace AnomalithAutoReload
 {
-    [BepInPlugin(PluginId, "ANOMALITH Auto Reload", "1.0.0")]
+    [BepInPlugin(PluginId, "ANOMALITH Auto Reload", "1.1.0")]
     public sealed class AutoReloadPlugin : BaseUnityPlugin
     {
         private const string PluginId = "labs.anomalith.autoreload";
         private static ConfigEntry<bool> autoReload;
         private Harmony harmony;
+        private ReloadOption option;
 
         private void Awake()
         {
@@ -32,6 +33,7 @@ namespace AnomalithAutoReload
                 var postfix = new HarmonyMethod(typeof(AutoReloadPlugin).GetMethod(nameof(AllowEmptyReload),
                     BindingFlags.Static | BindingFlags.NonPublic));
                 harmony.Patch(condition, postfix: postfix);
+                option = new ReloadOption(autoReload, Logger);
                 Logger.LogInfo($"Auto Reload loaded. Enabled: {autoReload.Value}.");
             }
             catch (Exception error)
@@ -41,9 +43,15 @@ namespace AnomalithAutoReload
             }
         }
 
+        private void LateUpdate()
+        {
+            option?.Refresh();
+        }
+
         private void OnDestroy()
         {
             harmony?.UnpatchSelf();
+            option?.Dispose();
         }
 
         private static void AllowEmptyReload(CancelDriver __instance, CancelCommands __0, ref bool __result)

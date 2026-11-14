@@ -1,0 +1,9 @@
+schema: spec-driven
+
+context: |
+  Target ANOMALITH for Windows x64 and BepInEx 5.
+  Preserve the native action and animation sequence for weapon switching.
+
+rules:
+  tasks:
+    - Include a Release build, live ScriptEngine checks, and strict OpenSpec validation.
