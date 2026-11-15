@@ -46,7 +46,7 @@ The plugin SHALL add one native Quick Weapon Switch ON/OFF selector and one nati
 #### Scenario: First use
 
 - **WHEN** the player has no saved multiplier
-- **THEN** the slider defaults to 2.0×
+- **THEN** the slider defaults to 1.5×
 
 #### Scenario: Turn Quick Weapon Switch off
 
@@ -57,3 +57,8 @@ The plugin SHALL add one native Quick Weapon Switch ON/OFF selector and one nati
 
 - **WHEN** ScriptEngine unloads and reloads the plugin
 - **THEN** both preferences are retained and the game has one of each setting row and one active speed adjustment
+
+#### Scenario: Reset to default
+
+- **WHEN** the native slider is reset to its default
+- **THEN** it returns to 1.5×

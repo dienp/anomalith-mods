@@ -3,7 +3,7 @@
 Quick Weapon Switch speeds up the normal firearm swap animation. In
 **Options → Other Settings**, use **Quick Weapon Switch** to turn it ON or
 OFF and **Switch Speed** to select 1.0×–3.0× in 0.1× steps. It starts
-enabled at 2.0× and remembers both settings.
+enabled at 1.5× and remembers both settings. Use Reset to Default to restore 1.5×.
 
 While enabled, one mouse-wheel notch cycles your assigned weapons immediately.
 Scrolling in either direction skips empty shortcuts and wraps around.

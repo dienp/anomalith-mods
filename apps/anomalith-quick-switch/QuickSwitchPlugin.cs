@@ -10,7 +10,7 @@ using HarmonyLib;
 
 namespace AnomalithQuickSwitch
 {
-    [BepInPlugin(PluginId, "ANOMALITH Quick Weapon Switch", "1.0.0")]
+    [BepInPlugin(PluginId, "ANOMALITH Quick Weapon Switch", "1.0.1")]
     public sealed class QuickSwitchPlugin : BaseUnityPlugin
     {
         private const string PluginId = "labs.anomalith.quickswitch";
@@ -19,7 +19,7 @@ namespace AnomalithQuickSwitch
             WeaponShortcutUI.Arrow.Left, WeaponShortcutUI.Arrow.Up, WeaponShortcutUI.Arrow.Right
         };
         internal const int MinimumSpeed = 10;
-        internal const int DefaultSpeed = 20;
+        internal const int DefaultSpeed = 15;
         internal const int MaximumSpeed = 30;
         private static ConfigEntry<bool> quickSwitch;
         private static ConfigEntry<int> switchSpeed;
@@ -32,7 +32,7 @@ namespace AnomalithQuickSwitch
             yield return null;
             quickSwitch = Config.Bind("Gameplay", "Enabled", true, "Speed up normal firearm swaps.");
             switchSpeed = Config.Bind("Gameplay", "SpeedTenths", DefaultSpeed, new ConfigDescription(
-                "Weapon switch speed in tenths of the normal speed. 20 means 2.0×.",
+                "Weapon switch speed in tenths of the normal speed. 15 means 1.5×.",
                 new AcceptableValueRange<int>(MinimumSpeed, MaximumSpeed)));
             harmony = new Harmony($"{PluginId}.{GetInstanceID()}");
             try

@@ -10,8 +10,9 @@ The minimap uses the native map symbols for main and side objectives, doors
 and area connections, portals, and available fast-travel points on the
 current floor.
 
-The minimap hides during menus, dialogs, cutscenes, transitions, and on floors
-where the game has no map. Use **Options → Other Settings → Minimap** or
+The minimap hides during menus, NPC and radio conversations, cutscenes,
+transitions, and on floors where the game has no map. It returns when the
+conversation panel closes. Use **Options → Other Settings → Minimap** or
 press **F10** to turn it off or on. The setting and key binding are stored in
 `BepInEx/config/labs.anomalith.minimap.cfg`. If the upgrade tracker is
 loaded, Other Settings also shows **Pinned Item**.

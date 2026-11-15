@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace AnomalithUpgradeTracker
 {
-    [BepInPlugin("labs.anomalith.upgradetracker", "ANOMALITH Upgrade Tracker", "1.8.0")]
+    [BepInPlugin("labs.anomalith.upgradetracker", "ANOMALITH Upgrade Tracker", "1.8.1")]
     public sealed class UpgradeTrackerPlugin : BaseUnityPlugin
     {
         private ConfigEntry<KeyboardShortcut> pinKey;
@@ -42,6 +42,7 @@ namespace AnomalithUpgradeTracker
         private string completionStatus;
         private bool reportedPickup;
         private bool showChecklist;
+        private bool showGuidance;
         private bool reportedChecklist;
         private float nextRefresh;
 
@@ -124,7 +125,7 @@ namespace AnomalithUpgradeTracker
                 hud != null && hud.GetShowUI() && hud.HUDCanvas != null &&
                 hud.HUDCanvas.isActiveAndEnabled;
 
-            if (canShow && (!showChecklist || Time.unscaledTime >= nextRefresh))
+            if (canShow && (!showGuidance || Time.unscaledTime >= nextRefresh))
             {
                 RefreshChecklist(inventory);
                 string status = pin.GetCompletionStatus(inventory, needed.Count == 0);
@@ -147,18 +148,20 @@ namespace AnomalithUpgradeTracker
                     Logger.LogInfo("Material sources: " + sourcesText.Replace("\n", " | "));
                 }
             }
-            else if (!canShow && showChecklist)
+            else if (!canShow && showGuidance)
             {
-                checklistView?.Hide();
                 highlights.Clear();
             }
 
-            showChecklist = canShow;
+            showGuidance = canShow;
         }
 
         private void LateUpdate()
         {
-            if (showChecklist && string.IsNullOrEmpty(completionStatus) &&
+            var hud = UIManager.Instance;
+            showChecklist = showGuidance && hud != null && !OvGainNotice.IsActive(hud.money);
+            checklistView?.SetVisible(showChecklist);
+            if (showGuidance && string.IsNullOrEmpty(completionStatus) &&
                 BattleManager.Instance != null && BattleManager.Instance.GetCurretState() == BattleManager.BATTLE_STATE.ON_AREA)
                 highlights.Refresh(needed);
             RefreshWorkshop();
@@ -335,6 +338,7 @@ namespace AnomalithUpgradeTracker
             nextRefresh = 0;
             nextWorkshopRefresh = 0;
             showChecklist = false;
+            showGuidance = false;
             showDeploy = false;
             reportedChecklist = false;
         }
@@ -380,7 +384,7 @@ namespace AnomalithUpgradeTracker
 
         private void OnGUI()
         {
-            if (Event.current.type != EventType.Repaint || !showChecklist)
+            if (Event.current.type != EventType.Repaint || !showGuidance)
                 return;
 
             if (titleStyle == null)
@@ -429,7 +433,7 @@ namespace AnomalithUpgradeTracker
                     }
                 }
 
-                if (checklistView == null)
+                if (showChecklist && checklistView == null)
                 {
                     bool complete = !string.IsNullOrEmpty(completionStatus);
                     int rowCount = complete ? 0 : pin.materials.Length;
@@ -446,7 +450,7 @@ namespace AnomalithUpgradeTracker
                     }
                 }
 
-                if (!reportedChecklist && string.IsNullOrEmpty(completionStatus))
+                if (showChecklist && !reportedChecklist && string.IsNullOrEmpty(completionStatus))
                 {
                     reportedChecklist = true;
                     var statuses = materialNames.Select((name, index) => $"{name} ({materialStatus[index]})");

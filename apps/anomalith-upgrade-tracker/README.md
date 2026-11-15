@@ -21,6 +21,8 @@ The gameplay checklist follows the Workshop's Required Materials layout,
 with the pinned item's category icon, larger material icons, shortage colors,
 and right-aligned owned/required counts that combine your bag and storage.
 OV appears only as a short status when it blocks crafting.
+The pinned recipe panel hides while the game's OV gain notification is visible
+and returns after it fades out.
 Nearby ground pickups appear during Dives when
 the camera can see them and you still need their materials.
 

@@ -60,3 +60,9 @@ open restored both OFF rows without duplicates.
 With the Release DLL in `BepInEx/plugins` and ScriptEngine outside the load
 path, BepInEx 5.4.23.6 loaded Minimap 1.3.0 at startup. After loading the save,
 the Base minimap rendered with the player marker and points of interest.
+
+## In-game conversations
+
+In a live Dive, a temporary test activated the game's side
+conversation panel. Minimap 1.3.1 hid while the panel was active and returned
+when it closed.

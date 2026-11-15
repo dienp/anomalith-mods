@@ -68,6 +68,13 @@ The tracker SHALL show the pinned recipe and live Workshop-style requirements du
 - **WHEN** the tracker displays an existing Combat Backpack pin
 - **THEN** the Workshop's Backpack icon appears beside its name
 
+#### Scenario: Gain OV during gameplay
+
+- **WHEN** the gameplay HUD shows the OV gain notification
+- **THEN** the pinned recipe panel hides through the notification's fade-out
+- **AND** pickup highlighting still follows the pin and its outstanding materials
+- **AND** the panel returns with current progress when gameplay and the Pinned Item setting allow it
+
 ### Requirement: Preserve the pin across ScriptEngine reload
 
 The tracker SHALL store its single pinned recipe in its own local configuration and restore it after a game restart or a ScriptEngine reload. The tracker SHALL read game state without writing to inventory, game settings, or saves.

@@ -158,7 +158,6 @@ namespace AnomalithUpgradeTracker
                 height += textHeight + 14f;
             }
             panel.sizeDelta = new Vector2(Width, height);
-            root.SetActive(true);
         }
 
         public float LayoutDeploy(PinnedRecipe recipe, IReadOnlyList<DeployMaterial> materials, float width)
@@ -233,8 +232,13 @@ namespace AnomalithUpgradeTracker
 
         public void Hide()
         {
-            if (root != null)
-                root.SetActive(false);
+            SetVisible(false);
+        }
+
+        public void SetVisible(bool visible)
+        {
+            if (root != null && root.activeSelf != visible)
+                root.SetActive(visible);
         }
 
         public void Destroy()

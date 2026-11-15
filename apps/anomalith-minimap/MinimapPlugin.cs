@@ -12,7 +12,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace AnomalithMinimap
 {
-    [BepInPlugin("labs.anomalith.minimap", "ANOMALITH Minimap", "1.3.0")]
+    [BepInPlugin("labs.anomalith.minimap", "ANOMALITH Minimap", "1.3.1")]
     public sealed class MinimapPlugin : BaseUnityPlugin
     {
         private PauseMenuMap nativeMenu;
@@ -165,12 +165,18 @@ namespace AnomalithMinimap
             if (battle == null || pause == null || hud == null || Time.timeScale <= 0 ||
                 battle.IsChangingArea || battle.IsOnDemo() || battle.IsCutScene() ||
                 battle.IsPlayerInputStop() || BattleManager.IsStopInput() ||
-                PauseMenu.IsOpen || pause.IsOpenProcess() || DialogManager.IsOpenDialog ||
+                PauseMenu.IsOpen || pause.IsOpenProcess() || DialogManager.IsOpenDialog || SideConversationActive() ||
                 !hud.GetShowUI() || hud.HUDCanvas == null || !hud.HUDCanvas.isActiveAndEnabled)
                 return false;
 
             var state = battle.GetCurretState();
             return state == BattleManager.BATTLE_STATE.ON_BASE || state == BattleManager.BATTLE_STATE.ON_AREA;
+        }
+
+        private static bool SideConversationActive()
+        {
+            var message = SideMessage.Instance;
+            return message != null && message.isActiveAndEnabled && message.IsEnable();
         }
 
         private bool EnsureView(PauseMenu pause)

@@ -155,3 +155,10 @@ With the Release DLL in `BepInEx/plugins` and ScriptEngine outside the load
 path, BepInEx 5.4.23.6 loaded Upgrade Tracker 1.8.0 at startup. The tracker
 restored the Revolver Attack Power pin and displayed the Base checklist
 with Theater Lamp at `0/1`.
+
+## OV gain notification
+
+A temporary in-game check played a native +0 OV gain animation during a
+Dive. Upgrade Tracker 1.8.1 hid the pinned recipe panel
+during the animation and fade-out, then restored the same pin. The
+player's balance stayed unchanged.
