@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BepInEx;
@@ -12,9 +13,18 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace AnomalithMinimap
 {
-    [BepInPlugin("labs.anomalith.minimap", "ANOMALITH Minimap", "1.3.1")]
+    [BepInPlugin("labs.anomalith.minimap", "ANOMALITH Minimap", "1.4.0")]
     public sealed class MinimapPlugin : BaseUnityPlugin
     {
+        internal const int MinimumSize = 5;
+        internal const int DefaultSize = 10;
+        internal const int MaximumSize = 20;
+        private const BindingFlags SideMessageFields = BindingFlags.Instance | BindingFlags.NonPublic;
+        private static readonly FieldInfo MessageWindow = typeof(SideMessage).GetField("m_MessageWindowAnim", SideMessageFields);
+        private static readonly FieldInfo MessageStart = typeof(SideMessage).GetField("m_StartAnimState", SideMessageFields);
+        private static readonly FieldInfo MessageEnd = typeof(SideMessage).GetField("m_EndAnimState", SideMessageFields);
+        private static readonly FieldInfo MessageStep = typeof(SideMessage).GetField("m_Step", SideMessageFields);
+
         private PauseMenuMap nativeMenu;
         private PauseMenu nativePause;
         private NativeMap native;
@@ -32,6 +42,7 @@ namespace AnomalithMinimap
         private float nextPointRefresh;
         private float mapRotation;
         private ConfigEntry<bool> showMap;
+        private ConfigEntry<int> mapSize;
         private ConfigEntry<KeyboardShortcut> toggleKey;
         private OverlayOptions options;
         private float saveAfter = float.PositiveInfinity;
@@ -40,11 +51,14 @@ namespace AnomalithMinimap
         private void Awake()
         {
             showMap = Config.Bind("General", "Enabled", true, "Show the minimap during gameplay.");
+            mapSize = Config.Bind("General", "SizeTenths", DefaultSize, new ConfigDescription(
+                "Minimap size in tenths of its normal size. 10 means 1.0×.",
+                new AcceptableValueRange<int>(MinimumSize, MaximumSize)));
             toggleKey = Config.Bind("Controls", "Toggle", new KeyboardShortcut(KeyCode.F10),
                 "Turn the minimap on or off.");
             Config.SaveOnConfigSet = false;
             Config.SettingChanged += ScheduleSave;
-            options = new OverlayOptions(showMap, Logger);
+            options = new OverlayOptions(showMap, mapSize, Logger);
             Logger.LogInfo($"Minimap {(showMap.Value ? "enabled" : "disabled")}. Toggle with {toggleKey.Value}.");
         }
 
@@ -54,6 +68,7 @@ namespace AnomalithMinimap
                 Toggle();
             options.Refresh();
             SaveWhenIdle();
+            view?.SetScale(mapSize.Value / 10f);
             if (!showMap.Value)
             {
                 view?.Hide();
@@ -176,7 +191,21 @@ namespace AnomalithMinimap
         private static bool SideConversationActive()
         {
             var message = SideMessage.Instance;
-            return message != null && message.isActiveAndEnabled && message.IsEnable();
+            if (message == null || !message.isActiveAndEnabled || !message.IsEnable())
+                return false;
+
+            var window = MessageWindow?.GetValue(message) as Animator;
+            if (window == null || !window.isActiveAndEnabled)
+                return false;
+
+            // The game activates the panel before submitting a line. A nonnegative step
+            // also covers the brief slide-out before a new speaker's line opens.
+            if (MessageStep?.GetValue(message) is int step && step >= 0)
+                return true;
+
+            var state = window.GetCurrentAnimatorStateInfo(0);
+            return state.IsName(MessageStart?.GetValue(message) as string ?? "") ||
+                (state.normalizedTime < 1f && state.IsName(MessageEnd?.GetValue(message) as string ?? ""));
         }
 
         private bool EnsureView(PauseMenu pause)
@@ -199,6 +228,7 @@ namespace AnomalithMinimap
             nativePoints = new NativeMapPoints(pauseMap);
             sceneName = null;
             view = new MinimapView(transform, native);
+            view.SetScale(mapSize.Value / 10f);
             return true;
         }
 

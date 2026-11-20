@@ -103,9 +103,17 @@ namespace AnomalithMinimap
             float left = RectTransformUtility.WorldToScreenPoint(camera, healthCorners[0]).x;
             float right = RectTransformUtility.WorldToScreenPoint(camera, healthCorners[3]).x;
             float size = (right - left) / canvas.scaleFactor;
-            if (size <= 0)
+            // HUD transitions can briefly report a positive but collapsed width.
+            // Keep the default or last usable size until the full bar is ready.
+            if (float.IsNaN(size) || float.IsInfinity(size) || size < ReferenceHealthWidth)
                 return;
             panel.sizeDelta = Vector2.one * size;
+        }
+
+        public void SetScale(float scale)
+        {
+            if (panel.localScale.x != scale)
+                panel.localScale = Vector3.one * scale;
         }
 
         public void SetFloor(Texture2D texture, string area, string floorName, float rotation)

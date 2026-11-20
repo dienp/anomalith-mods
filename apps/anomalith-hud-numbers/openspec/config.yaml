@@ -1,0 +1,5 @@
+schema: spec-driven
+
+context: |
+  Target the Windows x64 Unity Mono build of ANOMALITH and BepInEx 5.
+  Show numeric values from the game's native player status beside its HUD bars.

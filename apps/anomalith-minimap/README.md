@@ -6,6 +6,10 @@ corner in the Base and during Dives. The plan follows the player and switches
 floors automatically. The translucent square matches the full width of the
 health bar.
 
+Use **Options → Other Settings → Minimap Size** to scale the whole minimap
+from **0.5× to 2.0×** in 0.1× steps. The default is **1.0×**. The chosen
+size is saved in the same configuration file as the visibility setting.
+
 The minimap uses the native map symbols for main and side objectives, doors
 and area connections, portals, and available fast-travel points on the
 current floor.

@@ -27,7 +27,14 @@ The minimap SHALL appear in the bottom-left corner during active Base and Dive e
 #### Scenario: Read the enlarged map above the HUD
 
 - **WHEN** active gameplay is displayed at 1920 × 1080
-- **THEN** the minimap sits near the bottom-left edges, matches the full health bar's width, and shows a square, zoomed-in view around the player
+- **THEN** the minimap sits near the bottom-left edges, matches the full health bar's width at the default size, and shows a square, zoomed-in view around the player
+
+#### Scenario: Health bar layout is temporarily collapsed
+
+- **WHEN** the health bar reports a width smaller than the default minimap size or a non-finite width during a HUD transition
+- **THEN** the minimap retains its default or last usable size
+- **AND** its base width stays at least 261 reference pixels before the player's chosen size multiplier, scaled to the display height
+- **AND** it matches the full health bar again when a usable width is available
 
 ### Requirement: Hide outside active gameplay
 
@@ -37,6 +44,7 @@ The minimap SHALL hide while a dialog, in-game conversation shown in the side-me
 
 - **WHEN** the pause menu opens and then closes
 - **THEN** the minimap is absent in the menu and returns to the current position during gameplay
+- **AND** an enabled side-message panel that has yet to display a line does not delay the minimap's return
 
 #### Scenario: Dialog or cutscene
 
@@ -118,3 +126,19 @@ Minimap SHALL load from `BepInEx/plugins` when the game starts without ScriptEng
 
 - **WHEN** a player extracts the release into an ANOMALITH installation with BepInEx and launches the game
 - **THEN** BepInEx loads Minimap and the player can use it in gameplay without a reload key
+
+### Requirement: Adjust minimap size in Other Settings
+
+Other Settings SHALL include a native Minimap Size slider using the same interaction as Switch Speed. It SHALL scale the panel, map, labels, and markers together from 0.5× to 2.0× in 0.1× steps, with a default of 1.0×. The lower-left inset SHALL stay fixed. The chosen size SHALL persist independently of visibility.
+
+#### Scenario: Adjust size and resume gameplay
+
+- **WHEN** the player changes Minimap Size and closes Options
+- **THEN** the minimap uses the selected multiplier on its normal usable size
+- **AND** small transient health-bar measurements do not overwrite the selected multiplier
+
+#### Scenario: Save size while the minimap is off
+
+- **WHEN** the player adjusts Minimap Size while the Minimap setting is OFF and reloads the mod
+- **THEN** one Minimap Size slider shows the saved value
+- **AND** the minimap uses that size when re-enabled

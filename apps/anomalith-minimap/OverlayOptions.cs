@@ -14,8 +14,11 @@ namespace AnomalithMinimap
     {
         private const BindingFlags Private = BindingFlags.Instance | BindingFlags.NonPublic;
         private const string TrackerId = "labs.anomalith.upgradetracker";
+        private const string SizeLabel = "Minimap Size";
 
         private static readonly FieldInfo Prefab = typeof(OptionItemHolder).GetField("m_SelectPrefab", Private);
+        private static readonly FieldInfo SliderPrefab = typeof(OptionItemHolder).GetField("m_SliderPrefab", Private);
+        private static readonly FieldInfo SliderValueText = typeof(OptionItemSlider).GetField("m_ValueText", Private);
         private static readonly FieldInfo Content = typeof(OptionItemHolder).GetField("m_OptionContentRoot", Private);
         private static readonly FieldInfo Current = typeof(OptionItemHolder).GetField("m_CurrentOptionItem", Private);
         private static readonly FieldInfo IsOpen = typeof(OptionItemHolder).GetField("m_IsOpen", Private);
@@ -23,15 +26,22 @@ namespace AnomalithMinimap
         private static readonly FieldInfo ItemName = typeof(OptionItemBase).GetField("m_ItemNameText", Private);
 
         private readonly ConfigEntry<bool> showMap;
+        private readonly ConfigEntry<int> mapSize;
         private readonly ManualLogSource logger;
         private readonly List<Row> rows = new List<Row>(2);
         private OptionMenu menu;
         private OptionItemHolder holder;
+        private OptionItemSlider sizeSlider;
+        private TextMeshProUGUI sizeName;
+        private TextMeshProUGUI sizeValue;
+        private int displayedSize;
+        private string sizeText;
         private bool failed;
 
-        internal OverlayOptions(ConfigEntry<bool> showMap, ManualLogSource logger)
+        internal OverlayOptions(ConfigEntry<bool> showMap, ConfigEntry<int> mapSize, ManualLogSource logger)
         {
             this.showMap = showMap;
+            this.mapSize = mapSize;
             this.logger = logger;
         }
 
@@ -44,7 +54,8 @@ namespace AnomalithMinimap
             try
             {
                 if (menu != currentMenu || rows.Count == 0 || rows[0].Item == null ||
-                    holder == null || !holder.GetOptionList().Contains(rows[0].Item))
+                    sizeSlider == null || holder == null || !holder.GetOptionList().Contains(rows[0].Item) ||
+                    !holder.GetOptionList().Contains(sizeSlider))
                 {
                     Dispose();
                     menu = currentMenu;
@@ -54,6 +65,24 @@ namespace AnomalithMinimap
 
                 foreach (var row in rows)
                     row.Sync();
+
+                if (sizeName.text != SizeLabel)
+                    sizeName.text = SizeLabel;
+                var sizeParam = sizeSlider.GetOptionParam();
+                if (sizeParam.m_Value != displayedSize)
+                {
+                    mapSize.Value = sizeParam.m_Value;
+                    UpdateDisplayedSize();
+                    sizeParam.m_Value = displayedSize;
+                }
+                else if (mapSize.Value != displayedSize)
+                {
+                    UpdateDisplayedSize();
+                    sizeParam.m_Value = displayedSize;
+                    sizeSlider.UIUpdate();
+                }
+                if (sizeValue.text != sizeText)
+                    sizeValue.text = sizeText;
             }
             catch (Exception error)
             {
@@ -76,13 +105,30 @@ namespace AnomalithMinimap
             if (holder == null || holder.GetOptionList().Count == 0)
                 return false;
 
-            var prefab = (OptionItemSelect)Prefab.GetValue(holder);
-            var content = (RectTransform)Content.GetValue(holder);
+            var prefab = Prefab?.GetValue(holder) as OptionItemSelect;
+            var audioHolder = menu.GetOptionHolderList().Find(candidate =>
+                candidate != null && candidate.m_HolderGroupType == OptionGroupType.SOUND);
+            var sliderPrefab = SliderPrefab?.GetValue(audioHolder ?? holder) as OptionItemSlider;
+            var content = Content?.GetValue(holder) as RectTransform;
             if (prefab == null || content == null || Parameter == null || ItemName == null ||
-                Current == null || IsOpen == null)
-                throw new InvalidOperationException("The native Options selector is unavailable.");
+                Current == null || IsOpen == null || sliderPrefab == null || SliderValueText == null)
+                throw new InvalidOperationException("The native Options selector or slider is unavailable.");
 
             AddRow(prefab, content, "Minimap", "LABS_MINIMAP_VISIBILITY", showMap);
+            sizeSlider = Object.Instantiate(sliderPrefab, content);
+            sizeValue = (TextMeshProUGUI)SliderValueText.GetValue(sizeSlider);
+            UpdateDisplayedSize();
+            sizeName = InitializeRow(sizeSlider, new OptionParam
+            {
+                m_Id = "LABS_MINIMAP_SIZE",
+                m_OptionGroupType = OptionGroupType.OTHERS,
+                m_OptionParamType = OptionParamType.SLIDER,
+                m_MinValue = MinimapPlugin.MinimumSize,
+                m_DefaultValue = MinimapPlugin.DefaultSize,
+                m_MaxValue = MinimapPlugin.MaximumSize,
+                m_Value = displayedSize
+            }, SizeLabel);
+            sizeValue.text = sizeText;
             if (Chainloader.PluginInfos.TryGetValue(TrackerId, out var trackerInfo) &&
                 trackerInfo.Instance != null &&
                 trackerInfo.Instance.Config.TryGetEntry("Tracker", "ShowPinnedItem", out ConfigEntry<bool> showPin))
@@ -90,14 +136,19 @@ namespace AnomalithMinimap
                 AddRow(prefab, content, "Pinned Item", "LABS_PINNED_ITEM_VISIBILITY", showPin);
             }
             holder.MaskUpdate();
-            logger.LogInfo($"Added {rows.Count} native overlay toggles to Other Settings.");
+            logger.LogInfo($"Added {rows.Count} native overlay toggles and the Minimap Size slider to Other Settings.");
             return true;
+        }
+
+        private void UpdateDisplayedSize()
+        {
+            displayedSize = mapSize.Value;
+            sizeText = $"{displayedSize / 10f:0.0}×";
         }
 
         private void AddRow(OptionItemSelect prefab, RectTransform content, string label, string id,
             ConfigEntry<bool> setting)
         {
-            var list = holder.GetOptionList();
             var item = Object.Instantiate(prefab, content);
             var name = (TextMeshProUGUI)ItemName.GetValue(item);
             var row = new Row(item, setting, name, label);
@@ -113,6 +164,13 @@ namespace AnomalithMinimap
                 m_MaxValue = 1,
                 m_Value = row.Value
             };
+            InitializeRow(item, param, label);
+        }
+
+        private TextMeshProUGUI InitializeRow(OptionItemBase item, OptionParam param, string label)
+        {
+            var list = holder.GetOptionList();
+            var name = (TextMeshProUGUI)ItemName.GetValue(item);
             // Keep the parameter local to this row. The mod label has no game string-table entry.
             Parameter.SetValue(item, param);
             foreach (var component in name.GetComponents<Behaviour>())
@@ -129,6 +187,7 @@ namespace AnomalithMinimap
             item.IsInputActive = (bool)IsOpen.GetValue(holder);
             item.UIUpdate();
             list.Add(item);
+            return name;
         }
 
         public void Dispose()
@@ -138,16 +197,24 @@ namespace AnomalithMinimap
                 var list = holder.GetOptionList();
                 var selected = Current?.GetValue(holder) as OptionItemBase;
                 bool restoreSelection = false;
+                var items = new List<OptionItemBase>();
                 foreach (var row in rows)
+                    items.Add(row.Item);
+                if (sizeSlider != null)
+                    items.Add(sizeSlider);
+                foreach (var item in items)
                 {
-                    list.Remove(row.Item);
-                    restoreSelection |= ReferenceEquals(selected, row.Item);
-                    if (row.Item != null)
+                    list.Remove(item);
+                    restoreSelection |= ReferenceEquals(selected, item);
+                    if (item != null)
                     {
-                        row.Item.gameObject.SetActive(false);
-                        Object.Destroy(row.Item.gameObject);
+                        item.gameObject.SetActive(false);
+                        Object.Destroy(item.gameObject);
                     }
                 }
+                for (int i = 0; i < list.Count; i++)
+                    if (list[i] != null)
+                        list[i].ObjectNumber = i;
                 if (restoreSelection)
                 {
                     var replacement = list.FindLast(item => item != null && item.gameObject.activeSelf);
@@ -159,10 +226,13 @@ namespace AnomalithMinimap
                             menu.GuideUpdate(replacement.GetOptionParam());
                     }
                 }
-                if (rows.Count > 0)
+                if (items.Count > 0)
                     holder.MaskUpdate();
             }
             rows.Clear();
+            sizeSlider = null;
+            sizeName = null;
+            sizeValue = null;
             holder = null;
             menu = null;
         }

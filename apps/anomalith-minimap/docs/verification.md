@@ -66,3 +66,26 @@ the Base minimap rendered with the player marker and points of interest.
 In a live Dive, a temporary test activated the game's side
 conversation panel. Minimap 1.3.1 hid while the panel was active and returned
 when it closed.
+
+## Minimum minimap size
+
+A temporary Unity test probe passed synthetic health-bar layouts to the
+installed view's `MatchHealthBarWidth` method. Version 1.3.2 accepted an
+82-pixel measurement and reduced the panel to 82 × 82. Version 1.3.3 kept
+the 261-reference-pixel default or the last usable width through zero,
+tiny, and partially expanded measurements. It accepted normal widths and
+recovered when the layout returned. Checks also covered low health fill,
+canvas scale factors of 1, 2, and 1072/1080, and a return to scale 1.
+These tests changed canvas scale factors without changing the display's
+resolution. The original intermittent gameplay trigger remains unconfirmed.
+The probe was removed after testing.
+
+## Minimap Size slider
+
+Version 1.4.0 displayed a native Minimap Size slider beside Switch Speed
+in Other Settings at 1920 × 1080. A temporary probe changed its row value
+to 0.5× and 2.0× and verified that the configuration and panel scale both
+followed. The base panel remained 261 reference pixels. A 1.2× choice
+saved while the minimap was off survived a ScriptEngine reload. Reloading
+with Options open produced exactly one size slider. The original 1.0×
+size and enabled preference were restored after testing.
